@@ -19,8 +19,9 @@ struct SeedInfo {
 
 /* station wrapper consists of stationname, longitude, and latitude */
 struct StaInfo{
-   std::string name;
+   std::string name, net = "*";
    float lon, lat;
+	int flag = 1;
    StaInfo() : lon(0.), lat(0.) {}
    StaInfo(const char* inname, const float& lonin, const float& latin) { if(inname)name.assign(inname); lon=lonin; lat=latin; }
    friend bool operator== (StaInfo& a, StaInfo& b) { return ( a.name.compare(b.name)==0 && a.lon==b.lon && a.lat==b.lat ); }
@@ -54,6 +55,7 @@ struct DailyInfo : public DailyInfoData {
 
 	std::string& seedname = seed.name;
 	std::string& staname = sta.name;
+	std::string& netname = sta.net;
 	int& year = seed.year;
 	int& month = seed.month;
 	int& day = seed.day;

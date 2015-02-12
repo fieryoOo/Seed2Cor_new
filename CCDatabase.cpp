@@ -591,6 +591,14 @@ bool Seedlist::ReLocate( int year, int month, int day ) {
 
 /*-------------------------------------- Stationlist ----------------------------------------*/
 /* load in station list from input file */
+bool isInteger(const char* s) {
+	bool NDdetected = false;
+	int i;
+	for(i=0; s[i]!='\0'; i++) {
+		if( ! std::isdigit(s[i]) ) NDdetected = true;
+	}
+   return (i>0 && !NDdetected);
+}
 struct StaFinder {
    StaInfo a;
    StaFinder(StaInfo b) : a(b) {}
@@ -606,12 +614,25 @@ void Stationlist::Load( const std::string& fname ) {
    std::string buff;
    StaInfo SRtmp;
 	for(;std::getline(fsta, buff);) {
-		char stmp[buff.length()];
+		int blen = buff.length();
+		char stmp1[blen], stmp2[blen];
+      int ird = sscanf(buff.c_str(),"%s %f %f %s %d", stmp1, &(SRtmp.lon), &(SRtmp.lat), stmp2,  &(SRtmp.flag) );
+		if( ird < 3 ) {
+			std::cerr<<"Error(Stationlist::Load): format error(sta lon lat net[optional] flag[optional]) !"<<std::endl;
+			continue;
+		} else if( ird==4 && isInteger(stmp2) ) {
+			SRtmp.flag = atoi(stmp2);
+			sprintf(stmp2, "#");
+		} else if( ird > 3 ) {
+			SRtmp.net = stmp2;
+		}
+		SRtmp.name = stmp1;
+/*
 		if( (sscanf(buff.c_str(),"%s %f %f", stmp, &(SRtmp.lon), &(SRtmp.lat))) != 3 ) { 
 			std::cerr<<"Warning(Stationlist::Load): format error in file "<<fname<<std::endl; 
 			continue;
 		}
-		SRtmp.name = stmp;
+*/
 		icurrent = find_if(list.begin(), list.end(), StaFinder(SRtmp) );
 		if( icurrent != list.end() ) {
 			if( *icurrent == SRtmp ) { 

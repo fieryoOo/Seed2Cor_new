@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
 					SacRec sac( report );
 					sac.SetMaxMemForParallel( MemTotal * dinfo.memomax * 0.8 / omp_get_num_threads() );
 					SeedRec seedcur( dinfo.seedname, dinfo.rdsexe, report );
-					if( ! seedcur.ExtractSac( dinfo.staname, dinfo.chname, dinfo.sps, dinfo.rec_outname,
+					if( ! seedcur.ExtractSac( dinfo.staname, dinfo.netname, dinfo.chname, dinfo.sps, dinfo.rec_outname,
 								dinfo.resp_outname, gapfrac, sac ) ) {
 						sacV.push_back( std::move(sac) );
 						//sacV.push_back( SacRec() );
