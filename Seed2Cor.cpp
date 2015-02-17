@@ -20,6 +20,7 @@ void TNormAll( std::deque<SacRec>& sacV, const std::vector<DailyInfo>& dinfoV, b
 		throw std::runtime_error("Error(TNormAll): size mismatch ("+std::to_string(sacV.size())+" - "+std::to_string(dinfoV.size()));
 
 	SacRec sac_sigmax;
+	std::vector<bool> DivOnHold(sacV.size(), false);
 	for( int isac=0; isac<sacV.size(); isac++ ) {
 		auto& dinfo = dinfoV[isac];
 		auto& sac = sacV[isac];
@@ -43,6 +44,7 @@ void TNormAll( std::deque<SacRec>& sacV, const std::vector<DailyInfo>& dinfoV, b
 					}
 					/* max smoothed signal */
 					sac_sigmax.PullUpTo( sac_sm );
+					DivOnHold.at(isac) = true;
 				} else {
 					sac.RunAvg( dinfo.timehlen, dinfo.Eperl, dinfo.Eperh ); 
 				}
@@ -53,9 +55,10 @@ void TNormAll( std::deque<SacRec>& sacV, const std::vector<DailyInfo>& dinfoV, b
 		}
 	}
 
-	if( SyncNorm )
-		for( auto& sac : sacV )
-			if( sac.sig ) sac.Divf( sac_sigmax );
+	for( int isac=0; isac<sacV.size(); isac++ ) {
+		auto& sac = sacV[isac];
+		if( sac.sig && DivOnHold.at(isac) ) sac.Divf( sac_sigmax );
+	}
 	//sacV[0].Write( "Test_RunAvg.sac" );
 }
 

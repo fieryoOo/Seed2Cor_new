@@ -833,11 +833,10 @@ void SacRec::Smooth( float timehlen, SacRec& sacout ) const {
    int i, j, wb, we, n = shd.npts;
    float wsum, dt = shd.delta;
    int half_l = (int)floor(timehlen/dt+0.5);
-   std::unique_ptr<float[]> sigw_p( new float[n] );
-   if( ! sigw_p )
-		throw ErrorSR::MemError( FuncName, "new failed!");
    float *sigsac = sig.get(), *sigout = sacout.sig.get();
-   float *sigw = sigw_p.get(); //float sigw[n];
+	//float sigw[n];
+	std::unique_ptr<float> sigw_p(new float[n]);
+   float *sigw = sigw_p.get(); 
 	for( i=0; i<n; i++ ) sigw[i] = fabs(sigsac[i]);
 
 	/* */
